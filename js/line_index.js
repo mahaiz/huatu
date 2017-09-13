@@ -4,7 +4,7 @@
 //document.domain='test.mahai.hexun.com';
 function lineIndex() {
     var _chart,
-        _url='http://test.mahai.hexun.com:8210/data.json';
+        _url='http://test.mahai.hexun.com:8210/2017/huatu/data/data.json';
     var _lineIndex={
         init:function(){
 
@@ -24,70 +24,88 @@ function lineIndex() {
                     }
                 },
                 title: {
-                    /*style:{
+                    style:{
                         color: '#FF00FF',
                         fontSize: '12px'
-                    },*/
-                    text: '',
-                    /*
-                     algin:'left',
-                     floating: true,
+                    },
+                    text: '收益走势',
+
+                    align: 'left',
+                    // floating: true,
                     verticalAlign: 'top',
                     widthAdjust:-10,
-                    y:0*/
+                    //x:'0px',
+                    y:0
                 },
-                subtitle: {
+                /*subtitle: {
                     text: '总收益率',
                     floating: true,
                     align: 'right',
                     verticalAlign: 'top',
                     useHTML:true,
                     y: 0
-                },
+                },*/
                 legend: {
                     layout: 'horizontal',//'vertical',
                     align: 'right',
                     verticalAlign: 'top',
                     squareSymbol:true,
-                    enabled:false,
+                    itemStyle:{
+                      fontSize:'10px',
+                        "fontWeight": ""
+                    },
+                    //enabled:false,
                     //itemMarginTop:10,
                     labelFormatter:function(_v){
                         console.log('legend:',this)
-                        return "<span style='font-size: 16px;'>"+this.name+"</span>"
+                        return "<span style='font-size: 36px;'>"+this.name+"</span>"
                     },
                     y: -15,
                     floating: true,
-                    borderWidth: 1,
+                    borderWidth: 0,
                     //backgroundColor: (Highcharts.theme && Highcharts.theme.legendBackgroundColor) || '#FFFFFF',
                     symbolRadius:5,
                     symbolWidth:6,
                     symbolHeight:6,
-                    //userHTML:true
+                    userHTML:true
                 },
                 /*xAxis: {
                     categories: ['苹果', '梨', '橘子', '香蕉', '葡萄', '李子', '草莓', '树莓']
-                },
+                },*/
                 yAxis: {
                     title: {
                         //text: 'Y-Axis'
+                        enabled:false
                     },
                     labels: {
                         formatter: function () {
                             return this.value;
                         }
                     }
-                },*/
+                },
                 tooltip: {
                     formatter: function () {
                         return '<b>' + this.series.name + '</b><br/>' +
                             this.x + ': ' + this.y;
                     }
                 },
-                /*plotOptions: {
-                    area: {
-                        fillOpacity: 0.5
+                plotOptions: {
+                    series: {
+                        events: {
+                            legendItemClick: function () {
+                                return false;
+                            }
+                        },
+                        marker:{
+                            //enabled:false,
+                            states:{
+                                hover:{
+                                    enabled:false
+                                }
+                            }
+                        }
                     }
-                },*/
+                },
                 credits: {
                     enabled: false
                 },
@@ -95,9 +113,9 @@ function lineIndex() {
                     type:'line',
                     id:'poolYield',
                     name:'总收益率',
-                    color:'#129aee',
+                    color:'#ff0000',
                 },{
-                    type:'areaspline',
+                    type:'line',
                     id:'sseYield',
                     name:'上证指数',
                     color:'#00ff00'
@@ -150,7 +168,7 @@ function lineIndex() {
                         _chart.get('dateX').update({categories:_data.data.date});
                         _chart.get('poolYield').setData(_poolYield,false);
                         _chart.get('poolYield').show();//.update({visible:false});
-                        _chart.setTitle(null,{text:'<span>总收益率</span><span>上证指数</span>'});
+                        _chart.setTitle({"text":"总收益走势",x:_chart.plotLeft-8});
                         _chart.get('sseYield').setData(_sseYield,true);
                     }
                 });
