@@ -102,7 +102,7 @@ function lineIndex(_conId,_poolId,_type) {
                     enabled: false
                 },
                 series: [{
-                    type:'line',
+                    type:'line', 
                     id:'poolYield',
                     name:'总收益率',
                     color:'#ffffff',
