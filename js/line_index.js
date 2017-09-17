@@ -2,17 +2,17 @@
  * Created by hx on 2017/9/7.
  */
 //document.domain='test.mahai.hexun.com';
-function lineIndex(_conId,_poolId,_type) {
+function lineIndex(_conId,_poolId,_type,_isHome) {
     var _chart,
-        //_url='http://test.mahai.hexun.com:8210/2017/huatu/data/data.json';
-    _url='http://test.mahai.hexun.com:8210/lhjx/data/data.json';
+        _url='http://test.mahai.hexun.com:8210/2017/huatu/data/data.json';
+    //_url='http://test.mahai.hexun.com:8210/lhjx/data/data.json';
     var _lineIndex={
         init:function(){
             _chart = new Highcharts.Chart({
                 chart: {
                     spacingBottom: 3,
                     //marginTop:35,
-                    margin:[35,0,20,0],
+                    margin:[35,10,20,0],
                     renderTo:_conId,
                     type: 'area',
                     events: {
@@ -81,6 +81,7 @@ function lineIndex(_conId,_poolId,_type) {
                 },
                 plotOptions: {
                     series: {
+                        lineWidth:1,
                         events: {
                             legendItemClick: function () {
                                 return false;
@@ -88,6 +89,11 @@ function lineIndex(_conId,_poolId,_type) {
                         },
                         animation:false,
                         showInLegend:false,
+                        states:{
+                            hover:{
+                                enabled:false
+                            }
+                        },
                         marker:{
                             enabled:false,
                             states:{
@@ -102,23 +108,38 @@ function lineIndex(_conId,_poolId,_type) {
                     enabled: false
                 },
                 series: [{
-                    type:'area',
-                    threshold:-30,
+                    type:_isHome?'area':'line',
+                    threshold:null,
                     fillOpacity:0.3,
                     id:'poolYield',
                     name:'总收益率',
-                    color:'#ffffff',
+                    color:"#ffffff",
+                    softThreshold:false,
+                    fillColor: {
+                        linearGradient: [0, 0, 0, '100%'],
+                        stops: [
+                            [0.2, 'rgba(255 , 255 , 255,.5)'],
+                            [0.85, 'rgba(255 , 255 , 255,0.01)']
+                        ]
+                    },
+                    //linecap:"line",
+                    zoneAxis:'x'
                 },{
                     type:'line',
                     id:'sseYield',
                     name:'上证指数',
                     color:'#ffff00'
-                }],
+                }/*,{
+                    type:'column',
+                    id:'poolYield0',
+
+                }*/],
                 xAxis:
                     {
                         id: 'dateX',
                         tickWidth:0,
                         lineWidth:0,
+                        //gridLineWidth:1,
                         labels:{
                             style:{color:'#ffffff'},
                             /*formatter:function(){
@@ -141,12 +162,9 @@ function lineIndex(_conId,_poolId,_type) {
                     labels: {
                         align:'left',
                         x:0,
-                        formatter: function () {
-                            return this.value;
-                        },
                         style:{color:'#ffffff'},
                         formatter:function(){
-                            return this.value+'%';
+                            return _isHome?'':this.value+'%';
                         }
                     }
                 },
@@ -187,7 +205,7 @@ function lineIndex(_conId,_poolId,_type) {
                             _chart.setTitle(null, {text: "暂无数据"});
                         }
 
-                        var _tps=[],
+                        var _tps=[],_min= 0,_poolYield0=[],
                             _poolYield=$.isArray(_data.data.poolYield)?$.map(_data.data.poolYield,function(_item){
                             return parseFloat(_item);
                         }).reverse():[],
@@ -198,19 +216,30 @@ function lineIndex(_conId,_poolId,_type) {
                                 _tps.push(_i);
                                 return _item.substr(4,2)+'/'+_item.substr(6,2);
                             }).reverse():[0,1,2,3,4,5,6,7];
-                        _chart.get('dateX').update({tickPositions:_tps,
+                        _chart.get('dateX').update(_isHome?{categories:_date}:{tickPositions:_tps,
                             labels:{
                                 formatter:function(){
-                                 console.log("this.value=",this.value);
+                                 //console.log("this.value=",this.value);
                                  return _date[this.value] || this._value;
                                  }
                             }});
+                        /*$.each(_poolYield,function(_i,_item){
+                            //console.log('_i,_item=',_i,_item);
+                            _poolYield0.push({
+                                value:_item,
+                                color:'#ff0000'
+                            })
+                        });*/
+                        //_min=Math.min.apply({},_poolYield);
+                        //_poolYield0= $.map(_poolYield,function(_item){})
                         _chart.setTitle({"text":_type?"近一个月收益走势":"累计总收益",x:_chart.plotLeft-8},null);
                         _chart.get('sseYield').setData(_sseYield,false);
+                        //_chart.get('poolYield0').setData(_poolYield,false);
                         _chart.get('poolYield').setData(_poolYield,true);
-                        _chart.get('poolYield').update({showInLegend:true})
-                        _chart.get('sseYield').update({showInLegend:!_type});
-                        _type?_chart.get('sseYield').hide():_chart.get('sseYield').show();
+                        _chart.get('poolYield').update({showInLegend:true});
+                        //_chart.get('poolYield0').update({showInLegend:false});
+                        _chart.get('sseYield').update({showInLegend:!_type&&!_isHome});
+                        _type||_isHome?_chart.get('sseYield').hide():_chart.get('sseYield').show();
 
                     }
                 });
@@ -224,6 +253,6 @@ function lineIndex(_conId,_poolId,_type) {
     return _lineIndex;
 }
 $(function () {
-    var _poolId='00001',_type=1;
-   new lineIndex('container',_poolId,_type);
+    var _poolId='00001',_type= 1,_isHome=false;//true;//
+   new lineIndex('container',_poolId,_type,_isHome);
 });
