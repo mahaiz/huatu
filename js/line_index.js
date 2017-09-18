@@ -12,7 +12,7 @@ function lineIndex(_conId,_url,_poolId,_type,_isHome) {
                 chart: {
                     spacingBottom: 3,
                     //marginTop:35,
-                    margin:[35,10,20,0],
+                    margin:[_isHome?5:35,10,20,0],
                     renderTo:_conId,
                     type: 'area',
                     events: {
@@ -153,14 +153,17 @@ function lineIndex(_conId,_url,_poolId,_type,_isHome) {
                     }
                     ,
                 yAxis: {
+                    id: 'axis_Y',
+                    lineWidth:0,
                     title: {
                         //text: 'Y-Axis'
                         enabled:false
                     },
                     showFirstLabel:false,
                     gridLineWidth:0,
-                    //showLastLabel:false,
+                    showEmpty:true,
                     endOnTick:false,
+                    startOnTick:false,
                     labels: {
                         align:'left',
                         x:0,
@@ -174,11 +177,11 @@ function lineIndex(_conId,_url,_poolId,_type,_isHome) {
             })
         },
         loadData:function(){
-            console.log("_chart=",_chart,this)
+            //console.log("_chart=",_chart,this)
             try{
 
                 $.ajax({
-                    url: _url+'?427432',
+                    url: _url+'/'+_poolId+'/'+_type,
                     type: 'GET',     // 请求类型，常用的有 GET 和 POST
                     dataType:'json',
                     data: {
@@ -186,10 +189,10 @@ function lineIndex(_conId,_url,_poolId,_type,_isHome) {
                     },
                     success: function(_data) { // 接口调用成功回调函数
                         // data 为服务器返回的数据
-                        if ( $.isEmptyObject(_data) || !$.isArray(_data.data.poolYield)) {
+                        if ( $.isEmptyObject(_data) || parseFloat(_data.result)!=1) {
                             _chart.setTitle(null, {text: "暂无数据"});
+                            _data.data={};
                         }
-
                         var _tps=[],_min= 0,_poolYield0=[],
                             _poolYield=$.isArray(_data.data.poolYield)?$.map(_data.data.poolYield,function(_item){
                             return parseFloat(_item);
@@ -201,7 +204,6 @@ function lineIndex(_conId,_url,_poolId,_type,_isHome) {
                                 _tps.push(_i);
                                 return _item.substr(4,2)+'/'+_item.substr(6,2);
                             }).reverse():[0,1,2,3,4,5,6,7];
-
                         /*$.each(_poolYield,function(_i,_item){
                          //console.log('_i,_item=',_i,_item);
                          _poolYield0.push({
@@ -217,12 +219,13 @@ function lineIndex(_conId,_url,_poolId,_type,_isHome) {
                                     (_isHome?this.x:_date[this.x]) + ': ' + this.y+'%';
                             }
                         },})
-                        _chart.get('dateX').update(_isHome?{categories:_date,visible:false}:{tickPositions:_tps,
+                        if(_poolYield.length<=0 && _type==1)_chart.get('axis_Y').update({tickPositions:[0,5,10],max:10});
+                        _chart.get('dateX').update($.extend({},_isHome?{categories:_date,visible:false}:{tickPositions:_tps,
                             labels:{
                                 formatter:function(){
                                  return _date[this.value] || this._value;
                                  }
-                            }});
+                            }},{lineWidth:_poolYield.length<=0?1:0}));
                         _chart.setTitle(_isHome?null:{"text":_type?"近一个月收益走势":"累计总收益",x:_chart.plotLeft-8},null);
                         _chart.get('sseYield').setData(_sseYield,false);
                         //_chart.get('dateX').setData(_date,false);

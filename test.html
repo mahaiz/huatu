@@ -7,7 +7,8 @@
     <title>test</title>
     <!--<link href="css/highcharts.css" rel="stylesheet" type="text/css">-->
     <script src="http://imgcd.hexun.com/js/jquery.js"></script>
-    <script src="js/highcharts.src.js"></script>
+    <script src="js/cdGlobalObject.js"></script>
+    <script src="js/highcharts.js"></script>
     <!--<script src="js/no-data-to-display.js"></script>-->
     <!--<script src="https://img.hcharts.cn/highcharts-plugins/highcharts-zh_CN.js"></script>-->
 
@@ -35,8 +36,9 @@
 <script>
 
     $(function () {
-        var _poolId='00001',_type= 0,_isHome=true//false;//
-                ,_url='http://test.mahai.hexun.com:8210/lhjx/data/data.json';//接口请求地址
+        console.log('CDGlobal.apiList.tgApiHost=',ApiHostGlobal.apiList.tgApiHost)
+        var _poolId='92',_type= 0,_isHome=true//false;//
+                ,_url='http://10.0.201.136:8083/lhjx/front/sellPoolChart/';//http://test.mahai.hexun.com:8210/lhjx/data/data.json';//接口请求地址
         new lineIndex('container0',_url,_poolId,0,true);
 
         new lineIndex('container1',_url,_poolId,1,false);
