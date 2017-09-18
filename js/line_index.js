@@ -4,8 +4,8 @@
 //document.domain='test.mahai.hexun.com';
 function lineIndex(_conId,_poolId,_type,_isHome) {
     var _chart,
-        _url='http://test.mahai.hexun.com:8210/2017/huatu/data/data.json';
-    //_url='http://test.mahai.hexun.com:8210/lhjx/data/data.json';
+        //_url='http://test.mahai.hexun.com:8210/2017/huatu/data/data.json';
+    _url='http://test.mahai.hexun.com:8210/lhjx/data/data.json';
     var _lineIndex={
         init:function(){
             _chart = new Highcharts.Chart({
@@ -28,7 +28,7 @@ function lineIndex(_conId,_poolId,_type,_isHome) {
                         color: '#FFFFFF',
                         fontSize: '12px'
                     },
-                    text: '收益走势',
+                    text: '',
 
                     align: 'left',
                     // floating: true,
@@ -119,7 +119,7 @@ function lineIndex(_conId,_poolId,_type,_isHome) {
                         linearGradient: [0, 0, 0, '100%'],
                         stops: [
                             [0.2, 'rgba(255 , 255 , 255,.5)'],
-                            [0.85, 'rgba(255 , 255 , 255,0.01)']
+                            [0.9, 'rgba(255 , 255 , 255,0.01)']
                         ]
                     },
                     //linecap:"line",
@@ -159,33 +159,18 @@ function lineIndex(_conId,_poolId,_type,_isHome) {
                     },
                     showFirstLabel:false,
                     gridLineWidth:0,
+                    //showLastLabel:false,
+                    endOnTick:false,
                     labels: {
                         align:'left',
                         x:0,
                         style:{color:'#ffffff'},
-                        formatter:function(){
+                        formatter:function(){//
                             return _isHome?'':this.value+'%';
                         }
                     }
                 },
 
-                /*
-                * [{
-                 name: '小张',
-                 data: [0, 1, 4, 4, 5, 2, 3, 7]
-                 }, {
-                 name: '小潘',
-                 data: [1, 0, 3, null, 3, 1, 2, 1]
-                 }]
-                *
-                noData: {
-                    style: {
-                        fontWeight: 'bold',
-                        fontSize: '15px',
-                        color: '#303030'
-                    }
-                }
-                */
             })
         },
         loadData:function(){
@@ -216,10 +201,9 @@ function lineIndex(_conId,_poolId,_type,_isHome) {
                                 _tps.push(_i);
                                 return _item.substr(4,2)+'/'+_item.substr(6,2);
                             }).reverse():[0,1,2,3,4,5,6,7];
-                        _chart.get('dateX').update(_isHome?{categories:_date}:{tickPositions:_tps,
+                        _chart.get('dateX').update(_isHome?{categories:_date,visible:false}:{tickPositions:_tps,
                             labels:{
                                 formatter:function(){
-                                 //console.log("this.value=",this.value);
                                  return _date[this.value] || this._value;
                                  }
                             }});
@@ -232,12 +216,11 @@ function lineIndex(_conId,_poolId,_type,_isHome) {
                         });*/
                         //_min=Math.min.apply({},_poolYield);
                         //_poolYield0= $.map(_poolYield,function(_item){})
-                        _chart.setTitle({"text":_type?"近一个月收益走势":"累计总收益",x:_chart.plotLeft-8},null);
+                        _chart.setTitle(_isHome?null:{"text":_type?"近一个月收益走势":"累计总收益",x:_chart.plotLeft-8},null);
                         _chart.get('sseYield').setData(_sseYield,false);
                         //_chart.get('poolYield0').setData(_poolYield,false);
                         _chart.get('poolYield').setData(_poolYield,true);
-                        _chart.get('poolYield').update({showInLegend:true});
-                        //_chart.get('poolYield0').update({showInLegend:false});
+                        _chart.get('poolYield').update({showInLegend:!_isHome});
                         _chart.get('sseYield').update({showInLegend:!_type&&!_isHome});
                         _type||_isHome?_chart.get('sseYield').hide():_chart.get('sseYield').show();
 
@@ -252,7 +235,3 @@ function lineIndex(_conId,_poolId,_type,_isHome) {
     _lineIndex.init();
     return _lineIndex;
 }
-$(function () {
-    var _poolId='00001',_type= 1,_isHome=false;//true;//
-   new lineIndex('container',_poolId,_type,_isHome);
-});

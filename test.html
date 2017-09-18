@@ -18,9 +18,29 @@
 </head>
 <body>
 <!--<script src="http://imgcd.hexun.com/commonhead/js/commonhead.js"></script>-->
-<div id="container" style="min-width:400px;height:400px;background-color: #8f241c">
+总收益率%
+<div id="container0" style="min-width:400px;height:400px;background-color: #8f241c">
+
+</div>
+近一个月走势
+<div id="container1" style="min-width:400px;height:400px;background-color: #8f241c">
+
+</div>
+累计总收益率
+<div id="container2" style="min-width:400px;height:400px;background-color: #8f241c">
 
 </div>
 </body>
 <script src="js/line_index.js"></script>
+<script>
+
+    $(function () {
+        var _poolId='00001',_type= 0,_isHome=true;//false;//
+        new lineIndex('container0',_poolId,0,true);
+
+        new lineIndex('container1',_poolId,1,false);
+
+        new lineIndex('container2',_poolId,0,false);
+    });
+</script>
 </html>
