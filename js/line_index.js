@@ -2,10 +2,10 @@
  * Created by hx on 2017/9/7.
  */
 //document.domain='test.mahai.hexun.com';
-function lineIndex(_conId,_poolId,_type,_isHome) {
-    var _chart,
+function lineIndex(_conId,_url,_poolId,_type,_isHome) {
+    var _chart;
         //_url='http://test.mahai.hexun.com:8210/2017/huatu/data/data.json';
-    _url='http://test.mahai.hexun.com:8210/lhjx/data/data.json';
+    //_url='http://test.mahai.hexun.com:8210/lhjx/data/data.json';
     var _lineIndex={
         init:function(){
             _chart = new Highcharts.Chart({
@@ -73,12 +73,12 @@ function lineIndex(_conId,_poolId,_type,_isHome) {
                 /*xAxis: {
                     categories: ['苹果', '梨', '橘子', '香蕉', '葡萄', '李子', '草莓', '树莓']
                 },*/
-                tooltip: {
+                /*tooltip: {
                     formatter: function () {
                         return '<b>' + this.series.name + '</b><br/>' +
                             this.x + ': ' + this.y+'%';
                     }
-                },
+                },*/
                 plotOptions: {
                     series: {
                         lineWidth:1,
@@ -129,11 +129,11 @@ function lineIndex(_conId,_poolId,_type,_isHome) {
                     id:'sseYield',
                     name:'上证指数',
                     color:'#ffff00'
-                }/*,{
-                    type:'column',
-                    id:'poolYield0',
-
-                }*/],
+                },{
+                    type:'line',
+                    id:'dateX',
+                    visible:false
+                }],
                 xAxis:
                     {
                         id: 'dateX',
@@ -201,24 +201,31 @@ function lineIndex(_conId,_poolId,_type,_isHome) {
                                 _tps.push(_i);
                                 return _item.substr(4,2)+'/'+_item.substr(6,2);
                             }).reverse():[0,1,2,3,4,5,6,7];
+
+                        /*$.each(_poolYield,function(_i,_item){
+                         //console.log('_i,_item=',_i,_item);
+                         _poolYield0.push({
+                         value:_item,
+                         color:'#ff0000'
+                         })
+                         });*/
+                        //_min=Math.min.apply({},_poolYield);
+                        //_poolYield0= $.map(_poolYield,function(_item){})
+                        _chart.update({tooltip: {
+                            formatter: function () {
+                                return '<b>' + this.series.name + '</b><br/>' +
+                                    (_isHome?this.x:_date[this.x]) + ': ' + this.y+'%';
+                            }
+                        },})
                         _chart.get('dateX').update(_isHome?{categories:_date,visible:false}:{tickPositions:_tps,
                             labels:{
                                 formatter:function(){
                                  return _date[this.value] || this._value;
                                  }
                             }});
-                        /*$.each(_poolYield,function(_i,_item){
-                            //console.log('_i,_item=',_i,_item);
-                            _poolYield0.push({
-                                value:_item,
-                                color:'#ff0000'
-                            })
-                        });*/
-                        //_min=Math.min.apply({},_poolYield);
-                        //_poolYield0= $.map(_poolYield,function(_item){})
                         _chart.setTitle(_isHome?null:{"text":_type?"近一个月收益走势":"累计总收益",x:_chart.plotLeft-8},null);
                         _chart.get('sseYield').setData(_sseYield,false);
-                        //_chart.get('poolYield0').setData(_poolYield,false);
+                        //_chart.get('dateX').setData(_date,false);
                         _chart.get('poolYield').setData(_poolYield,true);
                         _chart.get('poolYield').update({showInLegend:!_isHome});
                         _chart.get('sseYield').update({showInLegend:!_type&&!_isHome});

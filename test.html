@@ -35,12 +35,13 @@
 <script>
 
     $(function () {
-        var _poolId='00001',_type= 0,_isHome=true;//false;//
-        new lineIndex('container0',_poolId,0,true);
+        var _poolId='00001',_type= 0,_isHome=true//false;//
+                ,_url='http://test.mahai.hexun.com:8210/lhjx/data/data.json';//接口请求地址
+        new lineIndex('container0',_url,_poolId,0,true);
 
-        new lineIndex('container1',_poolId,1,false);
+        new lineIndex('container1',_url,_poolId,1,false);
 
-        new lineIndex('container2',_poolId,0,false);
+        new lineIndex('container2',_url,_poolId,0,false);
     });
 </script>
 </html>
