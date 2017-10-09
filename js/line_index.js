@@ -7,12 +7,13 @@ function lineIndex(_conId,_url,_poolId,_type,_isHome) {
         //_url='http://test.mahai.hexun.com:8210/2017/huatu/data/data.json';
     //_url='http://test.mahai.hexun.com:8210/lhjx/data/data.json';
     var _lineIndex={
+        loaded:false,
         init:function(){
             _chart = new Highcharts.Chart({
                 chart: {
                     spacingBottom: 3,
                     //marginTop:35,
-                    margin:[_isHome?5:35,10,20,0],
+                    margin:[_isHome?5:35,10,20,10],
                     renderTo:_conId,
                     type: 'area',
                     events: {
@@ -58,7 +59,7 @@ function lineIndex(_conId,_url,_poolId,_type,_isHome) {
                     //enabled:false,
                     //itemMarginTop:10,
                     labelFormatter:function(_v){
-                        console.log('legend:',this)
+                        //console.log('legend:',this)
                         return "<span style='font-size: 36px;'>"+this.name+"</span>"
                     },
                     y: -15,
@@ -70,15 +71,6 @@ function lineIndex(_conId,_url,_poolId,_type,_isHome) {
                     symbolHeight:4,
                     userHTML:true
                 },
-                /*xAxis: {
-                    categories: ['苹果', '梨', '橘子', '香蕉', '葡萄', '李子', '草莓', '树莓']
-                },*/
-                /*tooltip: {
-                    formatter: function () {
-                        return '<b>' + this.series.name + '</b><br/>' +
-                            this.x + ': ' + this.y+'%';
-                    }
-                },*/
                 plotOptions: {
                     series: {
                         lineWidth:1,
@@ -122,34 +114,53 @@ function lineIndex(_conId,_url,_poolId,_type,_isHome) {
                             [0.9, 'rgba(255 , 255 , 255,0.01)']
                         ]
                     },
+
+                    enableMouseTracking:false,
                     //linecap:"line",
-                    zoneAxis:'x'
+                    //zoneAxis:'x',
+                    zIndex:0
                 },{
                     type:'line',
                     id:'sseYield',
+                    enableMouseTracking:false,
                     name:'上证指数',
-                    color:'#ffff00'
-                },{
-                    type:'line',
-                    id:'dateX',
-                    visible:false
-                }],
+                    color:'#ffff00',
+                    zIndex:1
+                }/*,{
+                    type:'column',
+                    id:'homeY',
+                    color:'#ff3c4c',
+                    threshold:null,
+                    borderWidth:0,
+                    pointWidth: 1.5,
+                    showInLegend:false,
+                    visible:_isHome,
+                    zIndex:2,
+                    enableMouseTracking:false
+                }*/],
                 xAxis:
                     {
                         id: 'dateX',
                         tickWidth:0,
                         lineWidth:0,
+                        endOnTick: true,
                         //gridLineWidth:1,
                         labels:{
-                            style:{color:'#ffffff'},
+                            //y:-20,
+                            style:{
+                                color:'#ffffff',
+                                fontSize:'11px'
+                            },
                             /*formatter:function(){
                                 console.log("this.value=",this.value);
                                 //return
                             }*/
+                            //enabled:false
                         },
-                        //endOnTick:true,
+                        //opposite:true,
                         //startOnTick: true,
-                        //showLastLabel: true,
+                        //type:'datetime',
+                        showLastLabel: true,
                     }
                     ,
                 yAxis: {
@@ -160,28 +171,31 @@ function lineIndex(_conId,_url,_poolId,_type,_isHome) {
                         enabled:false
                     },
                     showFirstLabel:false,
+                    showLastLabel:false,
                     gridLineWidth:0,
-                    showEmpty:true,
-                    endOnTick:false,
-                    startOnTick:false,
+                    //showEmpty:true,
+                    endOnTick:true,
+                    startOnTick:true,
+                    //tickPositioner:null,
                     labels: {
                         align:'left',
                         x:0,
                         style:{color:'#ffffff'},
                         formatter:function(){//
-                            return _isHome?'':this.value+'%';
+                            return _isHome?'':this.value.toFixed(2)+'%';
                         }
                     }
                 },
 
             })
         },
-        loadData:function(){
-            //console.log("_chart=",_chart,this)
+        loadData:function(__chart){
+            //console.log("_chart0=",__chart,this)
+            if(_lineIndex.loaded)return ;
             try{
 
                 $.ajax({
-                    url: _url+'/'+_poolId+'/'+_type,
+                    url: _url+'/'+_poolId+'/'+_type,//+'?'+(new Date()).getTime(),//
                     type: 'GET',     // 请求类型，常用的有 GET 和 POST
                     dataType:'json',
                     data: {
@@ -193,34 +207,59 @@ function lineIndex(_conId,_url,_poolId,_type,_isHome) {
                             _chart.setTitle(null, {text: "暂无数据"});
                             _data.data={};
                         }
-                        var _tps=[],_min= 0,_poolYield0=[],
+                        _lineIndex.loaded=true;
+                        //_data.data={};
+                        var _tps=[],_min= 0,_poolYield0=[],_max=0,_min=0,_ys=[],_diff=0
                             _poolYield=$.isArray(_data.data.poolYield)?$.map(_data.data.poolYield,function(_item){
                             return parseFloat(_item);
-                        }).reverse():[],
+                        }).reverse():[0],
                             _sseYield=$.isArray(_data.data.sseYield)?$.map(_data.data.sseYield,function(_item){
                             return parseFloat(_item);
-                        }).reverse():[],
+                        }).reverse():[0],
                             _date=$.isArray(_data.data.date)?$.map(_data.data.date,function(_item,_i){
                                 _tps.push(_i);
                                 return _item.substr(4,2)+'/'+_item.substr(6,2);
                             }).reverse():[0,1,2,3,4,5,6,7];
-                        /*$.each(_poolYield,function(_i,_item){
-                         //console.log('_i,_item=',_i,_item);
-                         _poolYield0.push({
-                         value:_item,
-                         color:'#ff0000'
-                         })
-                         });*/
-                        //_min=Math.min.apply({},_poolYield);
-                        //_poolYield0= $.map(_poolYield,function(_item){})
+
+                        console.log('_sseYield=',_sseYield)
+                        if(_poolYield.length<=1){
+                            _max=0.5;
+                            _min=-0.5;
+                        }else{
+                            _max=Math.max.apply({},_poolYield);
+                            _min=Math.min.apply({},_poolYield);
+                        }
+
+                        if(!_isHome && _sseYield.length>0){
+                            _max=Math.max(_max,Math.max.apply({},_sseYield));
+                            _min=Math.min(_min,Math.max.apply({},_sseYield));
+                        }
+                        if(_min<0)_max=Math.max(_max,Math.abs(_min));
+
+                        console.log('max,min=',_max,_min)
+                        _diff=(_max-(_min))/5;
+                        console.log("_diff=",_diff)
+                        _ys.push(0);
+                        while (_ys[_ys.length-1]<_max){
+                            _ys.push(_ys[_ys.length-1]+_diff);
+                        }
+                        while (_ys[0]>_min){
+                            _ys.unshift(_ys[0]-_diff);
+                        }
+                        console.log('ys=',_ys)
+                        _poolYield0= $.map(_poolYield,function(_item){
+                            return _item-0.2;
+                        });
                         _chart.update({tooltip: {
                             formatter: function () {
-                                return '<b>' + this.series.name + '</b><br/>' +
-                                    (_isHome?this.x:_date[this.x]) + ': ' + this.y+'%';
+                                return _date[this.x];//_isHome?this.x:_date[this.x];
+                                /*return '<b>' + this.series.name + '</b><br/>' +
+                                    (_isHome?this.x:_date[this.x]) + ': ' + this.y+'%';*/
                             }
                         },})
-                        if(_poolYield.length<=0 && _type==1)_chart.get('axis_Y').update({tickPositions:[0,5,10],max:10});
-                        _chart.get('dateX').update($.extend({},_isHome?{categories:_date,visible:false}:{tickPositions:_tps,
+                        _chart.get('axis_Y').update({tickPositions:_ys});
+                        console.log('_tps=',_tps)
+                        _chart.get('dateX').update($.extend({},{visible:!_isHome,tickPositions:_tps,
                             labels:{
                                 formatter:function(){
                                  return _date[this.value] || this._value;
@@ -228,12 +267,55 @@ function lineIndex(_conId,_url,_poolId,_type,_isHome) {
                             }},{lineWidth:_poolYield.length<=0?1:0}));
                         _chart.setTitle(_isHome?null:{"text":_type?"近一个月收益走势":"累计总收益",x:_chart.plotLeft-8},null);
                         _chart.get('sseYield').setData(_sseYield,false);
-                        //_chart.get('dateX').setData(_date,false);
+                        //_isHome?_chart.get('homeY').setData(_poolYield0,false):_chart.get('homeY').remove();
                         _chart.get('poolYield').setData(_poolYield,true);
                         _chart.get('poolYield').update({showInLegend:!_isHome});
-                        _chart.get('sseYield').update({showInLegend:!_type&&!_isHome});
-                        _type||_isHome?_chart.get('sseYield').hide():_chart.get('sseYield').show();
+                        _chart.get('sseYield').update({showInLegend:!_isHome});
+                        _isHome?_chart.get('sseYield').hide():_chart.get('sseYield').show();
+                        var _p=_chart.get('poolYield').data;
+                        console.log('_p=',_p)
+                        var _point;
+                        if(_isHome){
+                            $.each(_p,function(_i,_point){
+                                console.log('_point=',_point)
+                                _chart.renderer.rect(
+                                    _point.plotX + _chart.plotLeft-.05 ,
+                                    _point.plotY + _chart.plotTop+2 ,
+                                    1.5,
+                                    _chart.plotHeight-_point.plotY
+                                ).attr({
+                                    'stroke-width': 0,
+                                    stroke: 'red',
+                                    fill: '#ff3c4c',
+                                    zIndex: 5
+                                }).add();
+                            });
+                        }
 
+                        _point=_p[_p.length-1]
+                        _chart.renderer.label(_date[_tps.length-1] ,
+                                _point.plotX + _chart.plotLeft -50 ,
+                                _point.plotY + _chart.plotTop + 5,'rect',
+                                _point.plotX + _chart.plotLeft,
+                                _point.plotY + _chart.plotTop)
+                            .css({
+                                color: '#bbbbbb',
+                                align: 'center',
+                                'height':'10px'
+                            })
+                            .attr({
+                                fill: 'rgba(255, 255, 255, 0.95)',
+                                padding: 8,
+                                r: 15,
+                                zIndex: 6
+                            })
+                            .add();
+                        //if(_sseYield.length>1)_chart.tooltip.refresh(_p[_p.length-1],new Event("mouseOver"))
+                        $('#'+_conId).on('mouseout mouseover',function(e){
+                            //console.log('鼠标移动')
+                            e.preventDefault();
+                            e.stopPropagation();
+                        })
                     }
                 });
             } catch (_e){
