@@ -4,10 +4,13 @@
     <meta charset="gb2312">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <meta name="description" content="">
+    <meta >
     <title>test</title>
+
     <!--<link href="css/highcharts.css" rel="stylesheet" type="text/css">-->
     <script src="http://imgcd.hexun.com/js/jquery.js"></script>
-    <script src="js/highcharts.src.js"></script>
+    <!--<script src="js/cdGlobalObject.js"></script>-->
+    <script src="js/highcharts.js"></script>
     <!--<script src="js/no-data-to-display.js"></script>-->
     <!--<script src="https://img.hcharts.cn/highcharts-plugins/highcharts-zh_CN.js"></script>-->
 
@@ -18,9 +21,36 @@
 </head>
 <body>
 <!--<script src="http://imgcd.hexun.com/commonhead/js/commonhead.js"></script>-->
-<div id="container" style="min-width:400px;height:400px;background-color: #8f241c">
+总收益率%
+<div id="container0" style="min-width:400px;height:400px;background-color: #8f241c">
+
+</div>
+近一个月走势
+<div id="container1" style="min-width:400px;height:400px;background-color: #8f241c">
+
+</div>
+累计总收益率
+<div id="container2" style="min-width:400px;height:400px;background-color: #8f241c">
 
 </div>
 </body>
 <script src="js/line_index.js"></script>
+<script>
+
+    $(function () {
+//        console.log('CDGlobal.apiList.tgApiHost=',ApiHostGlobal.apiList.tgApiHost)
+        var _poolId='200',_type= 0,_isHome=true//false;//
+                ,_url='http://60.28.251.103:8088//lhjx/front/sellPoolChart/';//'http://test.mahai.hexun.com:8210/2017/0823lhjx2.0/data/data.json';//接口请求地址
+        //
+        new lineIndex('container0',_url,_poolId,0,true);
+
+        new lineIndex('container1',_url,_poolId,1,false);
+
+        new lineIndex('container2',_url,_poolId,0,false);
+    });
+
+    var _a='http://test.caidao.hexun.com/home/gold/index.html',_re=/home\/(?!h5)\/(.*?).html/ig;
+    console.log(_re.exec(_a))
+
+</script>
 </html>
