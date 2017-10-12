@@ -160,7 +160,7 @@ function lineIndex(_conId,_url,_poolId,_type,_isHome) {
                         //opposite:true,
                         //startOnTick: true,
                         //type:'datetime',
-                        showLastLabel: true,
+                        showLastLabel: true
                     }
                     ,
                 yAxis: {
@@ -170,8 +170,8 @@ function lineIndex(_conId,_url,_poolId,_type,_isHome) {
                         //text: 'Y-Axis'
                         enabled:false
                     },
-                    showFirstLabel:false,
-                    showLastLabel:false,
+                    //showFirstLabel:false,
+                    //showLastLabel:false,
                     gridLineWidth:0,
                     //showEmpty:true,
                     endOnTick:true,
@@ -218,7 +218,7 @@ function lineIndex(_conId,_url,_poolId,_type,_isHome) {
                         }).reverse():[0],
                             _date=$.isArray(_data.data.date)?$.map(_data.data.date,function(_item,_i){
                                 _tps.push(_i);
-                                return _item.substr(4,2)+'/'+_item.substr(6,2);
+                                return _item.substr(4,2)+(_isHome?'-':'/')+_item.substr(6,2);
                             }).reverse():[0,1,2,3,4,5,6,7];
 
                         console.log('_sseYield=',_sseYield)
@@ -237,7 +237,7 @@ function lineIndex(_conId,_url,_poolId,_type,_isHome) {
                         if(_min<0)_max=Math.max(_max,Math.abs(_min));
 
                         console.log('max,min=',_max,_min)
-                        _diff=(_max-(_min))/5;
+                        _diff=(_max-(_min))/3;
                         console.log("_diff=",_diff)
                         _ys.push(0);
                         while (_ys[_ys.length-1]<_max){
@@ -274,10 +274,11 @@ function lineIndex(_conId,_url,_poolId,_type,_isHome) {
                         _isHome?_chart.get('sseYield').hide():_chart.get('sseYield').show();
                         var _p=_chart.get('poolYield').data;
                         console.log('_p=',_p)
-                        var _point;
+                        var _point,_text,_box;
                         if(_isHome){
                             $.each(_p,function(_i,_point){
-                                console.log('_point=',_point)
+                                console.log('_point=',_point);
+                                if(_i<=0)return true;
                                 _chart.renderer.rect(
                                     _point.plotX + _chart.plotLeft-.05 ,
                                     _point.plotY + _chart.plotTop+2 ,
@@ -290,26 +291,47 @@ function lineIndex(_conId,_url,_poolId,_type,_isHome) {
                                     zIndex: 5
                                 }).add();
                             });
-                        }
-
-                        _point=_p[_p.length-1]
-                        _chart.renderer.label(_date[_tps.length-1] ,
-                                _point.plotX + _chart.plotLeft -50 ,
-                                _point.plotY + _chart.plotTop + 5,'rect',
-                                _point.plotX + _chart.plotLeft,
-                                _point.plotY + _chart.plotTop)
-                            .css({
-                                color: '#bbbbbb',
+                            _point=_p[_p.length-1];
+                            _text=_chart.renderer.text(
+                                _date[_tps.length-1] ,
+                                _point.plotX + _chart.plotLeft -45 ,
+                                _point.plotY + _chart.plotTop + 15
+                            ).css({
+                                color: '#ee5050',
                                 align: 'center',
                                 'height':'10px'
-                            })
-                            .attr({
-                                fill: 'rgba(255, 255, 255, 0.95)',
-                                padding: 8,
-                                r: 15,
-                                zIndex: 6
-                            })
-                            .add();
+                            }).attr({
+
+                                zIndex: 7
+                            }).add();
+                            _box = _text.getBBox();
+                            _chart.renderer.rect(_box.x - 9, _box.y - 3, _box.width + 18, _box.height + 6, 10)
+                                .attr({
+                                    fill: 'rgba(255, 255, 255, 0.95)',
+                                    stroke: 'gray',
+                                    'stroke-width': 0,
+                                    zIndex: 6
+                                })
+                                .add();
+                            /*_chart.renderer.label(_date[_tps.length-1] ,
+                                    _point.plotX + _chart.plotLeft -50 ,
+                                    _point.plotY + _chart.plotTop + 5,'rect',
+                                    _point.plotX + _chart.plotLeft,
+                                    _point.plotY + _chart.plotTop)
+                                .css({
+                                    color: '#ee5050',
+                                    align: 'center',
+                                    'height':'10px'
+                                })
+                                .attr({
+                                    fill: 'rgba(255, 255, 255, 0.95)',
+                                    padding: 8,
+                                    r: 15,
+                                    zIndex: 6
+                                })
+                                .add();*/
+                        }
+
                         //if(_sseYield.length>1)_chart.tooltip.refresh(_p[_p.length-1],new Event("mouseOver"))
                         $('#'+_conId).on('mouseout mouseover',function(e){
                             //console.log(' Û±Í“∆∂Ø')

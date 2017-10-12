@@ -39,14 +39,18 @@
 
     $(function () {
 //        console.log('CDGlobal.apiList.tgApiHost=',ApiHostGlobal.apiList.tgApiHost)
-        var _poolId='92',_type= 0,_isHome=true//false;//
-                ,_url='http://test.mahai.hexun.com:8210/2017/0823lhjx2.0/data/data.json';//接口请求地址
-        //'http://10.0.201.136:8083/lhjx/front/sellPoolChart/';//
+        var _poolId='200',_type= 0,_isHome=true//false;//
+                ,_url='http://60.28.251.103:8088//lhjx/front/sellPoolChart/';//'http://test.mahai.hexun.com:8210/2017/0823lhjx2.0/data/data.json';//接口请求地址
+        //
         new lineIndex('container0',_url,_poolId,0,true);
 
         new lineIndex('container1',_url,_poolId,1,false);
 
         new lineIndex('container2',_url,_poolId,0,false);
     });
+
+    var _a='http://test.caidao.hexun.com/home/gold/index.html',_re=/home\/(?!h5)\/(.*?).html/ig;
+    console.log(_re.exec(_a))
+
 </script>
 </html>
