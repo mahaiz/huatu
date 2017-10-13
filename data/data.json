@@ -1,11 +1,8 @@
 {
     "data": {
-        "poolYield": [
-        ],
-        "sseYield": [
-        ],
-        "date": [
-        ]
+        "poolYield": null,
+        "sseYield": null,
+        "date": null
     },
     "result": "1"
 }

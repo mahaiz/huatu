@@ -203,9 +203,14 @@ function lineIndex(_conId,_url,_poolId,_type,_isHome) {
                     },
                     success: function(_data) { // 接口调用成功回调函数
                         // data 为服务器返回的数据
-                        if ( $.isEmptyObject(_data) || parseFloat(_data.result)!=1) {
-                            _chart.setTitle(null, {text: "暂无数据"});
-                            _data.data={};
+                        //console.log("parseFloat(_data.result)=",parseFloat(_data.result))
+                        if ( $.isEmptyObject(_data) || parseFloat(_data.result)!=1 || !$.isArray(_data.data.poolYield)) {
+                            _chart.setTitle(null, {text: ""});
+                            _data.data={
+                                "poolYield": [],
+                                "sseYield": [],
+                                "date": []
+                            };
                         }
                         _lineIndex.loaded=true;
                         //_data.data={};
@@ -246,7 +251,7 @@ function lineIndex(_conId,_url,_poolId,_type,_isHome) {
                         while (_ys[0]>_min){
                             _ys.unshift(_ys[0]-_diff);
                         }
-                        console.log('ys=',_ys)
+                        //console.log('ys=',_ys)
                         _poolYield0= $.map(_poolYield,function(_item){
                             return _item-0.2;
                         });
@@ -258,7 +263,7 @@ function lineIndex(_conId,_url,_poolId,_type,_isHome) {
                             }
                         },})
                         _chart.get('axis_Y').update({tickPositions:_ys});
-                        console.log('_tps=',_tps)
+                        //console.log('_tps=',_tps)
                         _chart.get('dateX').update($.extend({},{visible:!_isHome,tickPositions:_tps,
                             labels:{
                                 formatter:function(){
@@ -273,9 +278,9 @@ function lineIndex(_conId,_url,_poolId,_type,_isHome) {
                         _chart.get('sseYield').update({showInLegend:!_isHome});
                         _isHome?_chart.get('sseYield').hide():_chart.get('sseYield').show();
                         var _p=_chart.get('poolYield').data;
-                        console.log('_p=',_p)
+                        //console.log('_p=',_p)
                         var _point,_text,_box;
-                        if(_isHome){
+                        if(_isHome && _p.length>0){
                             $.each(_p,function(_i,_point){
                                 console.log('_point=',_point);
                                 if(_i<=0)return true;
