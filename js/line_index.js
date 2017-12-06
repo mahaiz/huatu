@@ -237,7 +237,8 @@ function lineIndex(_conId,_url,_poolId,_type,_isHome) {
 
                         if(!_isHome && _sseYield.length>0){
                             _max=Math.max(_max,Math.max.apply({},_sseYield));
-                            _min=Math.min(_min,Math.max.apply({},_sseYield));
+                            _min=Math.min(_min,Math.min.apply({},_sseYield));
+                            //console.log('_sseYield:max,min=',_max,_min,_sseYield)
                         }
                         if(_min<0)_max=Math.max(_max,Math.abs(_min));
 

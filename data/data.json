@@ -1,8 +1,8 @@
 {
     "data": {
-        "poolYield": null,
-        "sseYield": null,
-        "date": null
+        "poolYield": ["1.63","0.00","0"],
+        "sseYield": ["0.1","-1.02","0"],
+        "date": ["20171013","20171012","20171011"]
     },
     "result": "1"
 }
